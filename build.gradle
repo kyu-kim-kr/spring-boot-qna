@@ -15,14 +15,19 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'pl.allegro.tech.boot:handlebars-spring-boot-starter:0.3.2'
-    implementation'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation'org.springframework.boot:spring-boot-starter-mustache'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     runtimeOnly 'com.h2database:h2'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 test {

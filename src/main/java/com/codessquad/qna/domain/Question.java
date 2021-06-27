@@ -1,77 +1,73 @@
 package com.codessquad.qna.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Question extends AbstractEntity {
 
     @ManyToOne
+    @JsonProperty
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @JsonProperty
     private String title;
+
+    @OneToMany(mappedBy = "question")
+    @OrderBy("id ASC")
+    private List<Answer> answers = new ArrayList<>();
+
+    @Lob
+    @JsonProperty
     private String contents;
-    private LocalDateTime createdDateTime = LocalDateTime.now();
 
-    public Long getId() {
-        return id;
+    @JsonProperty
+    private int answerCount = 0;
+
+    public Question() {
+
     }
 
-    public User getWriter() {
-        return writer;
-    }
-
-    public void setWriter(User writer) {
+    public Question(User writer, String title, String contents) {
         this.writer = writer;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
         this.contents = contents;
     }
 
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(LocalDateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public String getFormattedDateTime() {
-        return createdDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    }
-
-    public boolean userConfirmation(User loginUser) {
+    public boolean isMatchingWriter(User loginUser) {
         return this.writer.equals(loginUser);
     }
 
-    public void update(Question updateQna) {
-        this.title = updateQna.title;
-        this.contents = updateQna.contents;
+    public void update(String updateTitle, String updateContents) {
+        this.title = updateTitle;
+        this.contents = updateContents;
+    }
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answerCount++;
+    }
+
+    public void deleteAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            answer.deleted();
+            answerCount--;
+        }
     }
 
     @Override
     public String toString() {
         return "Qna{" +
+                super.toString() +
                 "writer='" + writer + '\'' +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
                 '}';
     }
+
 }
